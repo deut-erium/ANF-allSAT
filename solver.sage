@@ -1,4 +1,4 @@
-load("~/iitb2020/Spring/EE793/ANF-allSAT/anf.sage")
+load("anf.sage")
 import os
 os.environ["SAGE_NUM_THREADS"] = '9' 
 
@@ -53,7 +53,7 @@ def solve(F2:set):
 		reduce_init = I
 		return S.map_reduce(map_function, reduce_function, reduce_init)
 
-def solve_2(F):
+def solve_2(F:set):
 	if 0 in F:
 		return set()
 	elif len(F) == 1:
@@ -69,25 +69,3 @@ def solve_2(F):
 		seed = [(F_cp.copy(),t) for t in X]
 		e=set().union(*[t[-1] for t in list(solve_parallel(seed))])
 		return e
-
-def non_thread_solve(F2):
-	F=F2.copy()
-	I=set()
-	if 0 in F:
-		return set()
-	elif len(F) == 1:
-		return gen_implicant(F.__iter__().__next__())
-	elif len(F) == 0:
-		return set([1])
-	else:
-		f = heurestic(F)
-		X = gen_implicant(f)
-		F.remove(f)
-		for t in X:
-			F1 = set({q(quotient(s,t)) for s in F})
-			if 1 in F1:
-				I.union({t})
-				F1.remove(1)
-			Y = non_thread_solve(F1)
-			I.union({t*y for y in Y})
-		return I
